@@ -10,6 +10,7 @@ namespace СuttingPlan
     {
         static void Main(string[] args)
         {
+            int[,] points = new int[,] { {0, 2}, {1, 1}, {-1, 1}, {0, -2}, {-1, -1}, {1, -1} };
         }
     }
 }
