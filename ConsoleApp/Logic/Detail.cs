@@ -8,28 +8,41 @@ namespace ConsoleApp.Logic
 {
     public class Detail : ICloneable
     {
-        public int Size = 1;
         public Point position = new Point();
+        public int Size = 1;
+        public float Angle;
 
         private Point[] points;
-        private float angle;
+        private Point center;   
 
-        public Detail(Point[] points)
+        public Detail(Point[] points, Point center = null)
         {
             this.points = points;
+            if (center != null)
+                this.center = center;
+            else
+                this.center = new Point();
         }
 
-        public Detail(Point[] points, int size)
+        public Detail(Point[] points, int size, Point center = null)
         {
             this.points = points;
             this.Size = size;
+            if (center != null)
+                this.center = center;
+            else
+                this.center = new Point();
         }
 
-        public Detail(Point[] points, int size, Point position)
+        public Detail(Point[] points, int size, Point position, Point center = null)
         {
             this.points = points;
             this.Size = size;
             this.position = position;
+            if (center != null)
+                this.center = center;
+            else
+                this.center = new Point();
         }
 
 
@@ -52,16 +65,16 @@ namespace ConsoleApp.Logic
             for (int i = 1; i < points.Length - 1; i += 2)
                 curves.Add(new Curve()
                 {
-                    point1 = (points[i - 1] + position) * Size,
-                    point2 = (points[i] + position) * Size,
-                    point3 = (points[i + 1] + position) * Size
+                    point1 = ((points[i - 1] - center) * Size).Rotate(Angle, center) + position,
+                    point2 = ((points[i] - center) * Size).Rotate(Angle, center) + position,
+                    point3 = ((points[i + 1] - center) * Size).Rotate(Angle, center) + position
                 });
             // соединяем начало и конец
             curves.Add(new Curve()
             {
-                point1 = (points[points.Length - 2] + position) * Size,
-                point2 = (points[points.Length - 1] + position) * Size,
-                point3 = (points[0] + position) * Size
+                point1 = ((points[points.Length - 2] - center) * Size).Rotate(Angle, center) + position,
+                point2 = ((points[points.Length - 1]- center) * Size).Rotate(Angle, center) + position,
+                point3 = ((points[0] - center) * Size).Rotate(Angle, center) + position
             });
             return curves;
         }
@@ -71,7 +84,8 @@ namespace ConsoleApp.Logic
             return new Detail(
                 points.Select(pnt => (Point)pnt.Clone()).ToArray(),
                 Size,
-                (Point)position.Clone());
+                (Point)position.Clone(),
+                (Point)center.Clone());
         }
     }
 }

@@ -17,19 +17,18 @@ namespace ConsoleApp.Logic
             Y = y;
         }
 
-        public static Point operator +(Point a, Point b)
+        public Point Rotate(float degres, Point center)
         {
-            return new Point(a.X + b.X, a.Y + b.Y);
-        }
+            if (degres == 0)
+                return this;
 
-        /// <summary>
-        /// расстояние от точки до точки в квадрате
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public float GetSqareDistance(Point point)
-        {
-            return (int)Math.Pow(point.X - X, 2) + (int)Math.Pow(point.Y - Y, 2);
+            var x = X - center.X;
+            var y = Y - center.Y;
+            var radians = Math.PI * degres / 180.0;
+            return new Point(
+                X = (int)(x * Math.Cos(radians) - y * Math.Sin(radians)),
+                Y = (int)(x * Math.Sin(radians) + y * Math.Cos(radians))
+                );
         }
 
         public System.Drawing.Point GetDrawing()
@@ -37,14 +36,24 @@ namespace ConsoleApp.Logic
             return new System.Drawing.Point(X, Y);
         }
 
+        public object Clone()
+        {
+            return new Point(X, Y);
+        }
+
         public static Point operator *(Point a, int size)
         {
             return new Point(a.X * size, a.Y * size);
         }
 
-        public object Clone()
+        public static Point operator +(Point a, Point b)
         {
-            return new Point(X, Y);
+            return new Point(a.X + b.X, a.Y + b.Y);
+        }
+
+        public static Point operator -(Point a, Point b)
+        {
+            return new Point(a.X - b.X, a.Y - b.Y);
         }
     }
 }

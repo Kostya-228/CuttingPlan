@@ -17,6 +17,8 @@ namespace WindowsForms
         ConsoleApp.Logic.Detail detail;
         ConsoleApp.Logic.Detail detail2;
 
+        int step = 15;
+
         public Form1()
         {
             InitializeComponent();
@@ -28,10 +30,12 @@ namespace WindowsForms
         public void LoadDetails()
         {
             ConsoleApp.Logic.Point[] points = DBConnector.GetDetailPoints().Where(
-                det => det.DetailNumber == 1).Where(det => det.PointNumber != 0
+                det => det.DetailNumber == 1
                 ).Select(det => new ConsoleApp.Logic.Point(det.X, det.Y)).ToArray();
-            detail = new ConsoleApp.Logic.Detail(points);
-            detail.Size = 10;
+
+            detail = new ConsoleApp.Logic.Detail(points.Skip(1).ToArray(), 10, points.First());
+            detail.position.X += 100;
+            detail.position.Y += 100;
             detail2 = (ConsoleApp.Logic.Detail)detail.Clone();
         }
 
@@ -57,26 +61,38 @@ namespace WindowsForms
 
         private void button2_Click(object sender, EventArgs e)
         {
-            detail2.position.X += 3;
+            detail2.position.X += step;
             DrawDetails();
         }
 
 
         private void button3_Click(object sender, EventArgs e)
         {
-            detail2.position.Y += 3;
+            detail2.position.Y += step;
             DrawDetails();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            detail2.position.X -= 3;
+            detail2.position.X -= step;
             DrawDetails();
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            detail2.position.Y -= 3;
+            detail2.position.Y -= step;
+            DrawDetails();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            detail2.Angle += 15;
+            DrawDetails();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            detail2.Angle -= 15;
             DrawDetails();
         }
     }
