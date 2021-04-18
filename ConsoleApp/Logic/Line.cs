@@ -15,10 +15,8 @@ namespace ConsoleApp.Logic
         private int B { get { return point2.X - point1.X; } }
         private int C { get { return point1.X * point2.Y - point2.X * point1.Y; } }
 
-        public float k { get { return -A / B; } }
-        public float b { get { 
-                if (B == 0) return point1.X; 
-                else return -C / B; } }
+        public float k { get { return -A / (float)B; } }
+        public float b { get { return -C / (float)B; } }
 
         public Line(Point point1, Point point2)
         {
