@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ConsoleApp.Models
 {
     [Table(Name = "Детали для вырезания")]
-    public class DetailModel
+    public class DetailModel: AccessModelProxy
     {
 
         [Column(Name = "Артикул изделия", IsPrimaryKey = true)]

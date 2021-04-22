@@ -17,14 +17,43 @@ namespace ConsoleApp
 
         private static string conn_str = СuttingPlan.Properties.Settings.Default.ConnectionString;
 
-
-        public static List<DetailModel> GetDetailPoints()
+        public static OleDbConnection GetConnection()
         {
-            using (OleDbConnection connection = new OleDbConnection(conn_str))
+            return new OleDbConnection(conn_str);
+        }
+
+        public static List<T> GetList<T>() where T : class
+        {
+            using (OleDbConnection connection = GetConnection())
             {
                 DataContext db = new DataContext(connection);
-                Table<DetailModel> details = db.GetTable<DetailModel>();
-                return details.ToList();
+                Table<T> table = db.GetTable<T>();
+                return table.ToList();
+            }
+        }
+
+        public static void CreateList<T>(IEnumerable<T> items) where T : class
+        {
+            using (OleDbConnection connection = GetConnection())
+            {
+                DataContext db = new DataContext(connection);
+                foreach (var item in items)
+                {
+                    db.GetTable<T>().InsertOnSubmit(item);
+                }
+                db.SubmitChanges();
+            }
+        }
+
+        public static void UpdateList<T>(IEnumerable<T> items) where T : AccessModelProxy
+        {
+            using (OleDbConnection connection = GetConnection())
+            {
+                connection.Open();
+                foreach (AccessModelProxy item in items)
+                {
+                    item.Update(connection);
+                }
             }
         }
     }

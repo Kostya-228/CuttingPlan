@@ -74,6 +74,7 @@
     <Compile Include="Logic\Detail.cs" />
     <Compile Include="Logic\Line.cs" />
     <Compile Include="Logic\Point.cs" />
+    <Compile Include="Models\AccessModelProxy.cs" />
     <Compile Include="Models\DetailModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
