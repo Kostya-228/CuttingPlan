@@ -45,16 +45,24 @@
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.button8 = new System.Windows.Forms.Button();
             this.errorLabal = new System.Windows.Forms.Label();
+            this.numericBorder = new System.Windows.Forms.NumericUpDown();
+            this.label4 = new System.Windows.Forms.Label();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericBorder)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.panel1.Location = new System.Drawing.Point(240, 51);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(586, 340);
+            this.panel1.Size = new System.Drawing.Size(838, 522);
             this.panel1.TabIndex = 0;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // button1
             // 
@@ -215,11 +223,40 @@
             this.errorLabal.Size = new System.Drawing.Size(0, 13);
             this.errorLabal.TabIndex = 17;
             // 
+            // numericBorder
+            // 
+            this.numericBorder.Location = new System.Drawing.Point(289, 25);
+            this.numericBorder.Maximum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.numericBorder.Name = "numericBorder";
+            this.numericBorder.Size = new System.Drawing.Size(53, 20);
+            this.numericBorder.TabIndex = 18;
+            this.numericBorder.Value = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            this.numericBorder.ValueChanged += new System.EventHandler(this.numericBorder_ValueChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(237, 32);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(49, 13);
+            this.label4.TabIndex = 19;
+            this.label4.Text = "Граница";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(857, 422);
+            this.ClientSize = new System.Drawing.Size(1109, 604);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.numericBorder);
             this.Controls.Add(this.errorLabal);
             this.Controls.Add(this.button8);
             this.Controls.Add(this.numericUpDown1);
@@ -231,11 +268,15 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.panel1);
+            this.KeyPreview = true;
             this.Name = "MainForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericBorder)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -260,6 +301,8 @@
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Label errorLabal;
+        private System.Windows.Forms.NumericUpDown numericBorder;
+        private System.Windows.Forms.Label label4;
     }
 }
 

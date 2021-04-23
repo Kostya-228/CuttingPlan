@@ -12,8 +12,8 @@ namespace ConsoleApp.Logic
         public int Size = 1;
         public float Angle;
 
-        private Point[] points;
-        private Point center;   
+        public Point[] points { get; private set; }
+        public Point center { get; private set; }
 
         public Detail(Point[] points, Point center = null)
         {
@@ -48,6 +48,11 @@ namespace ConsoleApp.Logic
 
         public bool IsCrossing(Detail other)
         {
+            if (other.ContainsPoint(this.GetTranslatedPoints().First()))
+                return true;
+            if (this.ContainsPoint(other.GetTranslatedPoints().First()))
+                return true;
+
             foreach (var c1 in this.GetCurves())
             {
                 foreach (var c2 in other.GetCurves())
@@ -58,25 +63,67 @@ namespace ConsoleApp.Logic
             }
             return false;
         }
+        public Point[] GetInternalPolygon()
+        {
+            return GetTranslatedPoints().Where((x, i) => i % 2 == 0).ToArray();
+        }
+
+        private bool ContainsPoint(Point point)
+        {
+            return IsInPolygon(GetInternalPolygon(), Translate(center), point);
+        }
+
+        private static bool IsInPolygon(Point[] poly, Point center, Point point)
+        {
+            List<Line> lines = new List<Line>();
+            for (int i = 1; i < poly.Length; i += 1)
+                lines.Add(new Line(poly[i - 1], poly[i]));
+            lines.Add(new Line(poly[poly.Length - 1], poly[0]));
+
+            var line = new Line(center, point);
+            var c = lines.Where(l => l.IsCrossing(line)).Count();
+
+            return c % 2 == 0;
+        }
+
+        public Point Translate(Point p)
+        {
+            return ((p - center) * Size).Rotate(Angle, center) + position;
+        }
+
+
+        public IEnumerable<Point> GetTranslatedPoints()
+        {
+            return points.Select(p => Translate(p));
+        }
 
         public List<Curve> GetCurves()
         {
             var curves = new List<Curve>();
-            for (int i = 1; i < points.Length - 1; i += 2)
+            Point[] transaltared_points = GetTranslatedPoints().ToArray();
+            for (int i = 1; i < transaltared_points.Length - 1; i += 2)
                 curves.Add(new Curve()
                 {
-                    point1 = ((points[i - 1] - center) * Size).Rotate(Angle, center) + position,
-                    point2 = ((points[i] - center) * Size).Rotate(Angle, center) + position,
-                    point3 = ((points[i + 1] - center) * Size).Rotate(Angle, center) + position
+                    point1 = transaltared_points[i - 1],
+                    point2 = transaltared_points[i],
+                    point3 = transaltared_points[i + 1]
                 });
             // соединяем начало и конец
             curves.Add(new Curve()
             {
-                point1 = ((points[points.Length - 2] - center) * Size).Rotate(Angle, center) + position,
-                point2 = ((points[points.Length - 1]- center) * Size).Rotate(Angle, center) + position,
-                point3 = ((points[0] - center) * Size).Rotate(Angle, center) + position
+                point1 = transaltared_points[transaltared_points.Length - 2],
+                point2 = transaltared_points[transaltared_points.Length - 1],
+                point3 = transaltared_points[0]
             });
             return curves;
+        }
+
+        public bool IsCrossBorder(int borderX = 0, int borderY = 0)
+        {
+            return borderX > 0 && GetTranslatedPoints().Select(p => p.X).Max() > borderX ||
+                borderY > 0 && GetTranslatedPoints().Select(p => p.Y).Max() > borderY ||
+                GetTranslatedPoints().Select(p => p.X).Min() < 0 ||
+                GetTranslatedPoints().Select(p => p.Y).Min() < 0;
         }
 
         public object Clone()

@@ -31,6 +31,9 @@ namespace ConsoleApp.Logic
         /// <returns></returns>
         private bool HasAPoint(Point point)
         {
+            // чтобы два смежных отрезка давали только одно пересечение через смежную точку
+            // считаем, что что пересечение через начало отрезка - не является пересечением
+            if (point.Compare(point1)) return false;
             return Math.Min(point1.X, point2.X) <= point.X && Math.Max(point1.X, point2.X) >= point.X 
                 && Math.Min(point1.Y, point2.Y) <= point.Y && Math.Max(point1.Y, point2.Y) >= point.Y;
         }
@@ -44,7 +47,7 @@ namespace ConsoleApp.Logic
         {
             // общая точка двух прямых
             Point cross_point;
-            // если это прямая, параллельная оси Y
+            // если это прямая параллельна оси Y
             if (this.B == 0)
             {
                 // если другая прямая тоже параллельна оси Y - то прямые параллельны
@@ -62,8 +65,10 @@ namespace ConsoleApp.Logic
                 else
                     cross_point = new Point(this.point1.X, (int)(other.k * this.point1.X + other.b));
             }
+            // если только другая прямая параллельна оси Y
             else if (other.B == 0)
                 cross_point = new Point(other.point1.X, (int)(this.k * other.point1.X + this.b));
+            // если эта прямая параллельна оси X
             else if (this.A == 0)
             {
                 // если другая прямая тоже параллельна оси X - то прямые параллельны
@@ -80,8 +85,9 @@ namespace ConsoleApp.Logic
                 else
                     cross_point = new Point((int)((this.point1.Y - other.b) / other.k), this.point1.Y);
             }
+            // если только другая параллельна оси X
             else if (other.A == 0)
-                cross_point = new Point((int)((other.point1.Y - this.b) / this.k), this.point1.Y);
+                cross_point = new Point((int)((other.point1.Y - this.b) / this.k), other.point1.Y);
             else
                 cross_point = new Point(
                     (int)((other.b - this.b) / (this.k - other.k)),

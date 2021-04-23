@@ -68,10 +68,16 @@ namespace WindowsForms
                     if (item.IsCrossing(current))
                         is_cross = true;
             }
-            foreach (var curve in current.GetCurves())
+            if (current != null)
             {
-                g.DrawCurve(is_cross ? Pens.Red: Pens.Green, curve.GetDrawing());
+                if (current.IsCrossBorder((int)numericBorder.Value))
+                    is_cross = true;
+                foreach (var curve in current.GetCurves())
+                {
+                    g.DrawCurve(is_cross ? Pens.Red : Pens.Green, curve.GetDrawing());
+                }
             }
+           
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -86,7 +92,7 @@ namespace WindowsForms
                 return;
             }
             LoadDetail();
-            DrawDetails();
+            panel1.Invalidate();
             OnOffMoving(true);
             button8.Enabled = true;
         }
@@ -94,38 +100,38 @@ namespace WindowsForms
         private void button2_Click(object sender, EventArgs e)
         {
             current.position.X += step;
-            DrawDetails();
+            panel1.Invalidate();
         }
 
 
         private void button3_Click(object sender, EventArgs e)
         {
             current.position.Y += step;
-            DrawDetails();
+            panel1.Invalidate();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             current.position.X -= step;
-            DrawDetails();
+            panel1.Invalidate();
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
             current.position.Y -= step;
-            DrawDetails();
+            panel1.Invalidate();
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
             current.Angle += 15;
-            DrawDetails();
+            panel1.Invalidate();
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
             current.Angle -= 15;
-            DrawDetails();
+            panel1.Invalidate();
         }
 
         private void OnOffMoving(bool enabled)
@@ -144,6 +150,36 @@ namespace WindowsForms
             current = null;
             OnOffMoving(false);
             button8.Enabled = false;
+        }
+
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch(e.KeyCode)
+            {
+                case Keys.W: current.position.Y -= step; break;
+                case Keys.A: current.position.X -= step; break;
+                case Keys.S: current.position.Y += step; break;
+                case Keys.D: current.position.X += step; break;
+            }
+            panel1.Invalidate();
+        }
+
+        private void numericBorder_ValueChanged(object sender, EventArgs e)
+        {
+            panel1.Invalidate();
+        }
+
+        private void MainForm_Paint(object sender, PaintEventArgs e)
+        {
+            
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            DrawDetails();
+            e.Graphics.DrawLine(Pens.Red,
+                new Point((int)numericBorder.Value, 0),
+                new Point((int)numericBorder.Value, 1000));
         }
     }
 }

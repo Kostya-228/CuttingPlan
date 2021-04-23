@@ -55,5 +55,10 @@ namespace ConsoleApp.Logic
         {
             return new Point(a.X - b.X, a.Y - b.Y);
         }
+
+        public bool Compare(Point other)
+        {
+            return other.X == X && other.Y == Y;
+        }
     }
 }
