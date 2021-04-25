@@ -9,7 +9,7 @@ namespace ConsoleApp.Logic
     public class Detail : ICloneable
     {
         public Point position = new Point();
-        public int Size = 1;
+        public float Size = 1;
         public float Angle;
 
         public Point[] points { get; private set; }
@@ -24,7 +24,7 @@ namespace ConsoleApp.Logic
                 this.center = new Point();
         }
 
-        public Detail(Point[] points, int size, Point center = null)
+        public Detail(Point[] points, float size, Point center = null)
         {
             this.points = points;
             this.Size = size;
@@ -34,7 +34,7 @@ namespace ConsoleApp.Logic
                 this.center = new Point();
         }
 
-        public Detail(Point[] points, int size, Point position, Point center = null)
+        public Detail(Point[] points, float size, Point position, Point center = null)
         {
             this.points = points;
             this.Size = size;
@@ -43,6 +43,14 @@ namespace ConsoleApp.Logic
                 this.center = center;
             else
                 this.center = new Point();
+        }
+
+        public bool IsCrossing(Detail[] others)
+        {
+            foreach (var det in others)
+                if (IsCrossing(det))
+                    return true;
+            return false;
         }
 
 

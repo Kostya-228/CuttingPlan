@@ -41,9 +41,9 @@ namespace ConsoleApp.Logic
             return new Point(X, Y);
         }
 
-        public static Point operator *(Point a, int size)
+        public static Point operator *(Point a, float size)
         {
-            return new Point(a.X * size, a.Y * size);
+            return new Point((int)(a.X * size), (int)(a.Y * size));
         }
 
         public static Point operator +(Point a, Point b)

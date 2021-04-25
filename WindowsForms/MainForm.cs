@@ -14,11 +14,15 @@ namespace WindowsForms
 {
     public partial class MainForm : Form
     {
+        int borderX { get { return (int)numericBorder.Value; } }
+        int step { get { return (int)numericUpDown2.Value; } }
+        float size { get {
+                return (float)numericUpDown1.Value;
+            } }
+
         Graphics g;
         ConsoleApp.Logic.Detail current;
         List<ConsoleApp.Logic.Detail> other = new List<ConsoleApp.Logic.Detail>();
-
-        int step = 15;
 
         public MainForm()
         {
@@ -48,9 +52,7 @@ namespace WindowsForms
                 det => det.DetailNumber == int.Parse((string)comboBox2.SelectedItem) && det.Articul == (string)comboBox1.SelectedItem
                 ).Select(det => new ConsoleApp.Logic.Point(det.X, det.Y)).ToArray();
 
-            current = new ConsoleApp.Logic.Detail(points.Skip(1).ToArray(), (int)numericUpDown1.Value, points.First());
-            current.position.X += 100;
-            current.position.Y += 100;
+            current = new ConsoleApp.Logic.Detail(points.Skip(1).ToArray(), size, points.First());
         }
 
         public void DrawDetails()
@@ -64,13 +66,13 @@ namespace WindowsForms
                     g.DrawCurve(Pens.Green, curve1.GetDrawing());
                 }
 
-                if (!is_cross)
+                if (!is_cross && current != null)
                     if (item.IsCrossing(current))
                         is_cross = true;
             }
             if (current != null)
             {
-                if (current.IsCrossBorder((int)numericBorder.Value))
+                if (current.IsCrossBorder(borderX))
                     is_cross = true;
                 foreach (var curve in current.GetCurves())
                 {
@@ -81,20 +83,25 @@ namespace WindowsForms
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            if (comboBox1.SelectedIndex == -1)
-            {
-                errorLabal.Text = "Выберите Артикул";
-                return;
-            }
-            if (comboBox2.SelectedIndex == -1)
-            {
-                errorLabal.Text = "Выберите номер детали";
+            try { CheckDetailSelectors(); }
+            catch (Exception ex) { 
+                errorLabal.Text = ex.Message;
                 return;
             }
             LoadDetail();
+            current.position.X += 100;
+            current.position.Y += 100;
             panel1.Invalidate();
             OnOffMoving(true);
             button8.Enabled = true;
+        }
+
+        private void CheckDetailSelectors()
+        {
+            if (comboBox1.SelectedIndex == -1)
+                throw new Exception("Выберите Артикул");
+            if (comboBox2.SelectedIndex == -1)
+                throw new Exception("Выберите номер детали");
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -169,17 +176,75 @@ namespace WindowsForms
             panel1.Invalidate();
         }
 
-        private void MainForm_Paint(object sender, PaintEventArgs e)
-        {
-            
-        }
-
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
             DrawDetails();
             e.Graphics.DrawLine(Pens.Red,
-                new Point((int)numericBorder.Value, 0),
-                new Point((int)numericBorder.Value, 1000));
+                new Point(borderX, 0),
+                new Point(borderX, 1000));
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            try { CheckDetailSelectors(); }
+            catch (Exception ex)
+            {
+                errorLabal.Text = ex.Message;
+                return;
+            }
+            LoadDetail();
+            bool isSuccess = TryInsertFigure(
+                new Range() { min = 0, max = 1000, step = step },
+                new Range() { min = 0, max = borderX, step = step },
+                new Range() { min = 0, max = 360, step = 90 }
+                );
+            if (!isSuccess) {
+                current = null;
+                MessageBox.Show("не получилось вставить");
+                return;
+            }
+            TryInsertFigure(
+                new Range() { min = current.position.Y - step, max = current.position.Y+1, step = 1 },
+                new Range() { min = current.position.X - step, max = current.position.X+1, step = 1 },
+                new Range() { min = 0, max = 360, step = 90 }
+                );
+            panel1.Invalidate();
+            OnOffMoving(true);
+            button8.Enabled = true;
+        }
+
+        struct Range
+        {
+            public int min;
+            public int max;
+            public int step;
+        }
+
+        private bool TryInsertFigure(Range y_range, Range x_range, Range angle_range)
+        {
+            for (int y = y_range.min; y < y_range.max; y += y_range.step)
+            {
+                for (int x = x_range.min; x < x_range.max; x += x_range.step)
+                {
+                    for (int angle = angle_range.min; angle < angle_range.max; angle += angle_range.step)
+                    {
+                        current.position.X = x;
+                        current.position.Y = y;
+                        current.Angle = angle;
+                        if (current.IsCrossBorder(borderX))
+                            continue;
+                        if (current.IsCrossing(other.ToArray()))
+                            continue;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
