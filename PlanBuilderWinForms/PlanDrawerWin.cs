@@ -25,13 +25,13 @@ namespace PlanBuilderWinForms
 
         public void LoadDetails()
         {
-            ConsoleApp.Logic.Point[] points = DBConnector.GetDetailPoints().Where(
-                det => det.DetailNumber == 1
-                ).Select(det => new ConsoleApp.Logic.Point(det.X, det.Y)).ToArray();
+            //ConsoleApp.Logic.Point[] points = DBConnector.GetDetailPoints().Where(
+            //    det => det.DetailNumber == 1
+            //    ).Select(det => new ConsoleApp.Logic.Point(det.X, det.Y)).ToArray();
 
-            detail = new ConsoleApp.Logic.Detail(points.Skip(1).ToArray(), 10, points.First());
-            detail.position.X += 100;
-            detail.position.Y += 100;
+            //detail = new ConsoleApp.Logic.Detail(points.Skip(1).ToArray(), 10, points.First());
+            //detail.position.X += 100;
+            //detail.position.Y += 100;
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ConsoleApp;
@@ -79,7 +80,19 @@ namespace WindowsForms
                     g.DrawCurve(is_cross ? Pens.Red : Pens.Green, curve.GetDrawing());
                 }
             }
-           
+
+            if (other.Count > 0)
+            {
+                int new_threashold = other.Select(det => det.GetTranslatedPoints().Max(p => p.Y)).Max(x => x);
+                g.DrawLine(Pens.Red,
+                    new Point(0, new_threashold),
+                    new Point(1000, new_threashold));
+
+                g.DrawString(new_threashold.ToString(), Font, Brushes.Red,
+                    new Point(10, new_threashold  +1));
+            }
+            
+
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -182,6 +195,9 @@ namespace WindowsForms
             e.Graphics.DrawLine(Pens.Red,
                 new Point(borderX, 0),
                 new Point(borderX, 1000));
+
+            g.DrawString(borderX.ToString(), Font, Brushes.Red,
+                    new Point(borderX + 1, 10));
         }
 
         private void button11_Click(object sender, EventArgs e)
@@ -245,6 +261,103 @@ namespace WindowsForms
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            List<ConsoleApp.Logic.Detail> details = DBConnector.GetList<DetailModel>().Where(
+                det => det.Articul == (string)comboBox1.SelectedItem).GroupBy(det => det.DetailNumber).Select(art =>
+                    art.Select(det => new ConsoleApp.Logic.Point(det.X, det.Y)).ToArray()).Select(
+                points => new ConsoleApp.Logic.Detail(points.Skip(1).ToArray(), size, points.First())).ToList();
+
+            
+
+            new Thread(() => { Kek(details); }).Start();
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void Kek(List<ConsoleApp.Logic.Detail> details)
+        {
+            var allcombi = allcombinations(Enumerable.Range(0, details.Count()).ToList(), new List<int>()).ToList();
+            List<ConsoleApp.Logic.Detail> details_on_plan = new List<ConsoleApp.Logic.Detail>();
+            List<ConsoleApp.Logic.Detail> best = new List<ConsoleApp.Logic.Detail>();
+            int optimal_treashold = 1000;
+
+            for (int i = 0; i < allcombi.Count(); i++)
+            {
+                for(int j=0; j < allcombi[i].Count; j++)
+                {
+                    int index = allcombi[i][j];
+                    other = details_on_plan;
+                    current = details[index];
+
+                    TryInsertFigure(
+                    new Range() { min = 0, max = 1000, step = step },
+                    new Range() { min = 0, max = borderX, step = step },
+                    new Range() { min = 0, max = 360, step = 90 }
+                    );
+
+                    details_on_plan.Add(details[index]);
+                }
+                current = null;
+                
+                int new_threashold = details_on_plan.Select(det => det.GetTranslatedPoints().Max(p => p.Y)).Max(x => x);
+
+                if (optimal_treashold > new_threashold)
+                {
+                    //best = details_on_plan.Select(det => (ConsoleApp.Logic.Detail)det.Clone()).ToList();
+                    optimal_treashold = new_threashold;
+                    panel1.Invalidate();
+                    Thread.Sleep(1000);
+                }
+                    
+                details_on_plan = new List<ConsoleApp.Logic.Detail>();
+            }
+
+            MessageBox.Show("подбор окончен");
+        }
+
+        private static IEnumerable<List<T>> allcombinations<T>(List<T> arg, List<T> awithout)
+        {
+            if (arg.Count == 1)
+            {
+                var result = new List<List<T>>();
+                result.Add(new List<T>());
+                result[0].Add(arg[0]);
+                return result;
+            }
+            else
+            {
+                var result = new List<List<T>>();
+
+                foreach (var first in arg)
+                {
+                    var others0 = new List<T>(arg.Except(new T[1] { first }));
+                    awithout.Add(first);
+                    var others = new List<T>(others0.Except(awithout));
+
+                    var combinations = allcombinations(others, awithout);
+                    awithout.Remove(first);
+
+                    foreach (var tail in combinations)
+                    {
+                        tail.Insert(0, first);
+                        result.Add(tail);
+                    }
+                }
+                return result;
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            other = new List<ConsoleApp.Logic.Detail>();
+            current = null;
+            panel1.Invalidate();
         }
     }
 }

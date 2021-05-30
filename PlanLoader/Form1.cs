@@ -139,7 +139,7 @@ namespace PlanLoader
 
             try
             {
-                Validate();
+                Validate(articul, number);
             }
             catch (Exception ex)
             {

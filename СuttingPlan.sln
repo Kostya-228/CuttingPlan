@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanBuilderWinForms", "Plan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanLoader", "PlanLoader\PlanLoader.csproj", "{F006D030-7E56-413A-B612-487191F5CE8A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackageAll", "PackageAll\PackageAll.csproj", "{771FCFE3-0B4E-4F00-8DDC-1FF86C60487A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{F006D030-7E56-413A-B612-487191F5CE8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F006D030-7E56-413A-B612-487191F5CE8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F006D030-7E56-413A-B612-487191F5CE8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{771FCFE3-0B4E-4F00-8DDC-1FF86C60487A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{771FCFE3-0B4E-4F00-8DDC-1FF86C60487A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{771FCFE3-0B4E-4F00-8DDC-1FF86C60487A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{771FCFE3-0B4E-4F00-8DDC-1FF86C60487A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
